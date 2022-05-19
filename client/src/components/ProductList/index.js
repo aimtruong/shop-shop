@@ -23,7 +23,18 @@ function ProductList() {
         
       // take each product and save to IndexedDb
       data.products.forEach((product) => {
-        idbPromise.apply('products', 'put', product);
+        idbPromise('products', 'put', product);
+      });
+    }
+    else if(!loading){
+      // check if loading is undefined in useQuery()
+      // get all data from products while offline
+      idbPromise('products', 'get').then((products) => {
+        // use retrieved data to set global state for offline browsing
+        dispatch({
+          type: UPDATE_PRODUCTS,
+          products: products
+        });
       });
     }
   }, [data, loading, dispatch]);
