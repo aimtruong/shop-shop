@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 
 import ProductItem from '../ProductItem';
 import { QUERY_PRODUCTS } from '../../utils/queries';
+import { idbPromise } from '../../utils/helpers';
 import spinner from '../../assets/spinner.gif';
 
 import { useStoreContext } from '../../utils/GlobalState';
@@ -19,8 +20,13 @@ function ProductList() {
         type: UPDATE_PRODUCTS,
         products: data.products
       });
+        
+      // take each product and save to IndexedDb
+      data.products.forEach((product) => {
+        idbPromise.apply('products', 'put', product);
+      });
     }
-  }, [data, dispatch]);
+  }, [data, loading, dispatch]);
 
   function filterProducts() {
     if (!currentCategory) {
